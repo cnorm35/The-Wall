@@ -1,0 +1,33 @@
+.form-signin {
+	max-width: 400px;
+	padding: 15px;
+	margin: 0px auto;
+}
+
+h1 {
+	text-align: center;
+}
+
+/*p{
+	text-align: center;
+}*/
+
+h4{
+	text-align: center;
+}
+
+.message-header{
+	text-align: left;
+}
+
+#submit-quote {
+	float:	right;
+	margin: 10px 0px 0px 0px;
+}
+
+.text-danger {
+	text-align: center;
+}
+.message {
+	text-align: left;
+}
