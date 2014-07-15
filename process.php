@@ -23,6 +23,10 @@
 	{
 		post_comment($_POST);
 	}
+	elseif (isset($_POST['action']) && $_POST['action'] == 'delete')
+	{
+		delete_message($_POST);
+	}
 	else 
 	{
 		session_destroy();
@@ -160,6 +164,14 @@
 
 		}
 	}
+
+	function delete_message($post)
+		{
+			$query = "DELETE FROM messages where id = {$post['delete_message']}";
+			// var_dump($_POST['delete_message']);
+			run_mysql_query($query);
+			header('location: main.php');
+		}
 
 
 

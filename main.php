@@ -23,7 +23,8 @@ require_once('new-connection.php');
 		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 			<div class="navbar-header">
 				<a class="navbar-brand navbar-left" href="main.php" id="dojo">CodingDojo Wall</a>
-				<p class="navbar-text navbar-right" id="log-out">Welcome <?php echo $_SESSION['first_name'];?> <a href="process.php">Log Out</a></p>
+				<p class="navbar-text navbar-right" id="welcome">Welcome <?php echo "{$_SESSION['first_name']} <a id='log-out' href='process.php'>Log Out</a></p>";?>
+
 			</div>
 		</nav>
 		<div class="container">
@@ -55,22 +56,32 @@ require_once('new-connection.php');
 		</form>
 
 		<?php
-			$message_query = "SELECT users.first_name, users.last_name, messages.id, messages.message, messages.created_at
+			$message_query = "SELECT users.first_name, users.last_name, messages.id, messages.message, messages.created_at, messages.users_id
 						FROM messages JOIN users ON messages.users_id = users.id ORDER BY created_at DESC";
 			$messages = fetch_all($message_query);
 			
 			foreach ($messages as $message) 
 			{
+				// var_dump($message);
 				$message_date = strtotime($message['created_at']);
-
 				echo "<p class='message'><strong> {$message['first_name']}" . " " . "{$message['last_name']} " . date('M jS Y', $message_date) ."</strong></p>";
 				echo "<p class='message'> {$message['message']} </p>";
+
+				if($message['users_id'] == $_SESSION['user-id'])
+				{
+					echo "<form action='process.php' method='post'>
+							<input type='hidden' name='action' value='delete'/>
+							<input type='hidden' name='delete_message' value='{$message['id']}'/>
+							<input type='submit' class='btn btn-danger btn-xs'  id='delete-btn' value='Delete'/>
+						  </form> ";
+
+				}
+
 				$comments_query = "SELECT comments.messages_id, comments.comment, users.first_name, users.last_name, comments.created_at
 									FROM comments
 									JOIN users ON comments.users_id = users.id
 									WHERE messages_id = {$message['id']}";
 				$comments = fetch_all($comments_query);
-				// var_dump($comments);
 				foreach ($comments as $comment) {
 					$comment_date = strtotime($comment['created_at']);
 					echo "<p class='comment'><strong> {$comment['first_name']}" . " " . "{$comment['last_name']} " . date('M jS Y', $comment_date) ."</strong></p>";
