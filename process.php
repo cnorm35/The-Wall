@@ -18,6 +18,11 @@
 	{
 		post_message($_POST);
 	}
+	//post new comment 
+	elseif (isset($_POST['action']) && $_POST['action'] == "comment")
+	{
+		post_comment($_POST);
+	}
 
 
 
@@ -120,6 +125,32 @@
 			run_mysql_query($query);
 			header('location: main.php');
 			die();
+		}
+	}
+
+	function post_comment($post)
+	{
+		$_SESSION['comment-errors'] = array();
+
+		if(empty($post['comment']))
+		{
+			$_SESSION['comment-errors'][] = "Comment cannot be left blank.";
+		}
+
+		if(count($_SESSION['comment-errors']) > 0)
+		{
+			header('location: main.php');
+			die();
+		}
+		else
+		{
+			//enter query to post comment into db.
+			$query = "INSERT INTO comments (users_id, comment, created_at, updated_at)
+						VALUES ('{$_SESSION['user-id']}', '{$post['comment']}', NOW(), NOW())";
+			echo $query;
+			// header('location: main.php');
+			// die();
+
 		}
 	}
 

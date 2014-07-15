@@ -37,6 +37,14 @@ require_once('new-connection.php');
 					unset($_SESSION['message-errors']);
 				}
 
+				if(isset($_SESSION['comment-errors']))
+				{
+					foreach ($_SESSION['comment-errors'] as $comment_error) {
+						echo "<p class='text-danger'> {$comment_error} </p>";
+					}
+					unset($_SESSION['comment-errors']);
+				}
+
 			?>
 
 		<form action="process.php" method="post">
@@ -47,15 +55,22 @@ require_once('new-connection.php');
 		</form>
 
 		<?php
-			$query = "SELECT users.first_name, users.last_name, messages.message, messages.created_at
+			$query = "SELECT users.first_name, users.last_name, messages.id, messages.message, messages.created_at
 						FROM messages JOIN users ON messages.users_id = users.id GROUP BY created_at DESC";
 			$messages = fetch_all($query);
 			
 			foreach ($messages as $message) 
 			{
-				$date = strtotime($message['created_at']);
-				echo "<p class='message'> {$message['first_name']}" . " " . "{$message['last_name']} " . date('M jS Y', $date) ."</p>";
+				$message_date = strtotime($message['created_at']);
+				echo "<p class='message'><strong> {$message['first_name']}" . " " . "{$message['last_name']} " . date('M jS Y', $message_date) ."</strong></p>";
 				echo "<p class='message'> {$message['message']} </p>";
+				echo "<form action='process.php' method='post'>
+						<input type='hidden' name='action' value='comment'>
+						<h5 class='comment-header'>Post a comment</h5>
+						<textarea class='form-control' rows='1'  placeholder='Enter comment...' name='comment'></textarea>
+						<input type='submit' class='btn btn-success btn-sm' value='Post a comment' id='submit-comment'/>
+					</form>";
+
 			}
 
 		?>
