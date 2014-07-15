@@ -20,10 +20,10 @@ require_once('new-connection.php');
 </head>
 <body>
 	
-		<nav class="navbar navbar-default" role="navigation">
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="main.php">CodingDojo Wall</a>
-				<p class="navbar-text navbar-right">Welcome <?php echo $_SESSION['first_name'];?> <a href="process.php">Log Out</a></p>
+				<a class="navbar-brand navbar-left" href="main.php" id="dojo">CodingDojo Wall</a>
+				<p class="navbar-text navbar-right" id="log-out">Welcome <?php echo $_SESSION['first_name'];?> <a href="process.php">Log Out</a></p>
 			</div>
 		</nav>
 		<div class="container">
@@ -47,7 +47,7 @@ require_once('new-connection.php');
 
 			?>
 
-		<form action="process.php" method="post">
+		<form action="process.php" method="post" id="message-box">
 			<input type="hidden" name="action" value="post-message">
 			<h4 class="message-header">Post a message</h4>
 			<textarea class="form-control" rows="4"  placeholder="Enter message..." name="message"></textarea>
@@ -55,23 +55,38 @@ require_once('new-connection.php');
 		</form>
 
 		<?php
-			$query = "SELECT users.first_name, users.last_name, messages.id, messages.message, messages.created_at
-						FROM messages JOIN users ON messages.users_id = users.id GROUP BY created_at DESC";
-			$messages = fetch_all($query);
+			$message_query = "SELECT users.first_name, users.last_name, messages.id, messages.message, messages.created_at
+						FROM messages JOIN users ON messages.users_id = users.id ORDER BY created_at DESC";
+			$messages = fetch_all($message_query);
 			
 			foreach ($messages as $message) 
 			{
 				$message_date = strtotime($message['created_at']);
+
 				echo "<p class='message'><strong> {$message['first_name']}" . " " . "{$message['last_name']} " . date('M jS Y', $message_date) ."</strong></p>";
 				echo "<p class='message'> {$message['message']} </p>";
+				$comments_query = "SELECT comments.messages_id, comments.comment, users.first_name, users.last_name, comments.created_at
+									FROM comments
+									JOIN users ON comments.users_id = users.id
+									WHERE messages_id = {$message['id']}";
+				$comments = fetch_all($comments_query);
+				// var_dump($comments);
+				foreach ($comments as $comment) {
+					$comment_date = strtotime($comment['created_at']);
+					echo "<p class='comment'><strong> {$comment['first_name']}" . " " . "{$comment['last_name']} " . date('M jS Y', $comment_date) ."</strong></p>";
+					echo "<p class='comment'> {$comment['comment']} </p>"; 
+				}
+
 				echo "<form action='process.php' method='post'>
 						<input type='hidden' name='action' value='comment'>
+						<input type='hidden' name='message_id' value='{$message['id']}'>
 						<h5 class='comment-header'>Post a comment</h5>
 						<textarea class='form-control' rows='1'  placeholder='Enter comment...' name='comment'></textarea>
 						<input type='submit' class='btn btn-success btn-sm' value='Post a comment' id='submit-comment'/>
 					</form>";
 
 			}
+
 
 		?>
 

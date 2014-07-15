@@ -23,6 +23,12 @@
 	{
 		post_comment($_POST);
 	}
+	else 
+	{
+		session_destroy();
+		header('location: index.php');
+		die();
+	}
 
 
 
@@ -145,11 +151,12 @@
 		else
 		{
 			//enter query to post comment into db.
-			$query = "INSERT INTO comments (users_id, comment, created_at, updated_at)
-						VALUES ('{$_SESSION['user-id']}', '{$post['comment']}', NOW(), NOW())";
-			echo $query;
-			// header('location: main.php');
-			// die();
+			$query = "INSERT INTO comments (users_id, messages_id, comment, created_at, updated_at)
+						VALUES ({$_SESSION['user-id']}, {$post['message_id']}, '{$post['comment']}', NOW(), NOW())";
+			// echo $query;
+			run_mysql_query($query);
+			header('location: main.php');
+			die();
 
 		}
 	}
