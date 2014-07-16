@@ -67,7 +67,7 @@ require_once('new-connection.php');
 				$now = time();
 				$time_diff_in_minutes = ($now - $message_date) / 60;
 				echo "<p class='message'><strong> {$message['first_name']}" . " " . "{$message['last_name']} " . date('M jS Y', $message_date) ."</strong></p>";
-				echo "<p class='message'> {$message['message']} </p>";
+				echo "<p class='message'> ".stripslashes($message['message'])." </p>";
 				
 				//if user id and user logged in match AND messaged posted in last 30 min show delete button and allow delete.
 				if($message['users_id'] == $_SESSION['user-id'] && $time_diff_in_minutes < 30)
@@ -88,7 +88,7 @@ require_once('new-connection.php');
 				foreach ($comments as $comment) {
 					$comment_date = strtotime($comment['created_at']);
 					echo "<p class='comment'><strong> {$comment['first_name']}" . " " . "{$comment['last_name']} " . date('M jS Y', $comment_date) ."</strong></p>";
-					echo "<p class='comment'> {$comment['comment']} </p>"; 
+					echo "<p class='comment'>" .stripslashes($comment['comment']) . " </p>"; 
 				}
 
 				echo "<form action='process.php' method='post'>

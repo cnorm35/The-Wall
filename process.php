@@ -74,6 +74,7 @@
 			header('location: index.php');
 			die();
 		}
+
 		else 
 		{
 			//escape string to protect against sql injection.
@@ -181,6 +182,7 @@
 			// var_dump($_POST['delete_message']);
 			run_mysql_query($query);
 			header('location: main.php');
+			die();
 		}
 
 
