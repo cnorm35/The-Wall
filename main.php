@@ -64,10 +64,15 @@ require_once('new-connection.php');
 			{
 				// var_dump($message);
 				$message_date = strtotime($message['created_at']);
+				$now = time();
+				// echo $message_date;
+				// echo $now;
+				$time_diff_in_minutes = ($now - $message_date) / 60;
+				// echo $time_diff_in_minutes;
 				echo "<p class='message'><strong> {$message['first_name']}" . " " . "{$message['last_name']} " . date('M jS Y', $message_date) ."</strong></p>";
 				echo "<p class='message'> {$message['message']} </p>";
 
-				if($message['users_id'] == $_SESSION['user-id'])
+				if($message['users_id'] == $_SESSION['user-id'] && $time_diff_in_minutes < 30)
 				{
 					echo "<form action='process.php' method='post'>
 							<input type='hidden' name='action' value='delete'/>
