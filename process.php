@@ -76,9 +76,15 @@
 		}
 		else 
 		{
+			//escape string to protect against sql injection.
+			$esc_first_name = escape_this_string($post['first_name']);
+			$esc_last_name = escape_this_string($post['last_name']);
+			$esc_email = escape_this_string($post['email']);
+			$esc_password = escape_this_string($post['password']);
+
 			//code to add new user into db
 			$query = "INSERT INTO users (first_name, last_name, email, password, created_at, updated_at)
-						VALUES ('{$post['first_name']}', '{$post['last_name']}', '{$post['email']}', '{$post['password']}', NOW(), NOW())";
+						VALUES ('{$esc_first_name}', '{$esc_last_name}', '{$esc_email}', '{$esc_password}', NOW(), NOW())";
 			run_mysql_query($query);
 			//with new user created add success message to show up on index.php
 			$_SESSION['success'] = "User successfully created!";
@@ -130,8 +136,10 @@
 		}
 		else
 		{
+			//esc message before loaded into the database.
+			$esc_message = escape_this_string($post['message']);
 			$query = "INSERT INTO messages (users_id, message, created_at, updated_at)
-					VALUES ('{$_SESSION['user-id']}', '{$post['message']}', NOW(), NOW())";
+					VALUES ('{$_SESSION['user-id']}', '{$esc_message}', NOW(), NOW())";
 			run_mysql_query($query);
 			header('location: main.php');
 			die();
@@ -154,9 +162,11 @@
 		}
 		else
 		{
+			//escape comments before going into db
 			//enter query to post comment into db.
+			$esc_comment = escape_this_string($post['comment']);
 			$query = "INSERT INTO comments (users_id, messages_id, comment, created_at, updated_at)
-						VALUES ({$_SESSION['user-id']}, {$post['message_id']}, '{$post['comment']}', NOW(), NOW())";
+						VALUES ({$_SESSION['user-id']}, {$post['message_id']}, '{$esc_comment}', NOW(), NOW())";
 			// echo $query;
 			run_mysql_query($query);
 			header('location: main.php');
